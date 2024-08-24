@@ -1,0 +1,348 @@
+
+import java.util.Arrays;
+import java.util.Random;
+public class SortingAnalysis {
+ public static void main(String[] args) {
+ int[] sizes = {1000, 5000, 10000}; // Array sizes to test
+ for (int size : sizes) {
+ System.out.println("Array Size: " + size);
+ int[] array = generateRandomArray(size);
+ // Measure time for Bubble Sort
+ int[] bubbleSortArray = Arrays.copyOf(array, array.length);
+ long startTime = System.nanoTime();
+ bubbleSort(bubbleSortArray);
+ long endTime = System.nanoTime();
+ System.out.println("Bubble Sort: " + (endTime - startTime) / 1e6 + " ms");
+ // Measure time for Selection Sort
+ int[] selectionSortArray = Arrays.copyOf(array, array.length);
+ startTime = System.nanoTime();
+ selectionSort(selectionSortArray);
+ endTime = System.nanoTime();
+ System.out.println("Selection Sort: " + (endTime - startTime) / 1e6 + " ms");
+ // Measure time for Insertion Sort
+ int[] insertionSortArray = Arrays.copyOf(array, array.length);
+ startTime = System.nanoTime();
+ insertionSort(insertionSortArray);
+ endTime = System.nanoTime();
+ System.out.println("Insertion Sort: " + (endTime - startTime) / 1e6 + " ms");
+ // Measure time for Merge Sort
+ int[] mergeSortArray = Arrays.copyOf(array, array.length);
+ startTime = System.nanoTime();
+ mergeSort(mergeSortArray);
+ endTime = System.nanoTime();
+ System.out.println("Merge Sort: " + (endTime - startTime) / 1e6 + " ms");
+ // Measure time for Quick Sort
+ int[] quickSortArray = Arrays.copyOf(array, array.length);
+ startTime = System.nanoTime();
+ quickSort(quickSortArray, 0, quickSortArray.length - 1);
+ endTime = System.nanoTime();
+ System.out.println("Quick Sort: " + (endTime - startTime) / 1e6 + " ms");
+ System.out.println();
+ }
+ }
+ // Generates an array of random integers
+ public static int[] generateRandomArray(int size) {
+ Random rand = new Random();
+ int[] array = new int[size];
+ for (int i = 0; i < size; i++) {
+ array[i] = rand.nextInt(10000); // Random numbers between 0 and 9999
+ }
+ return array;
+ }
+ // Bubble Sort Algorithm
+ public static void bubbleSort(int[] array) {
+ int n = array.length;
+ for (int i = 0; i < n - 1; i++) {
+ for (int j = 0; j < n - i - 1; j++) {
+ if (array[j] > array[j + 1]) {
+ int temp = array[j];
+ array[j] = array[j + 1];
+ array[j + 1] = temp;
+ }
+ }
+ }
+ }
+ // Selection Sort Algorithm
+ public static void selectionSort(int[] array) {
+ int n = array.length;
+ for (int i = 0; i < n - 1; i++) {
+ int minIndex = i;
+ for (int j = i + 1; j < n; j++) {
+ if (array[j] < array[minIndex]) {
+ minIndex = j;
+ }
+ }
+ int temp = array[minIndex];
+ array[minIndex] = array[i];
+ array[i] = temp;
+ }
+ }
+ // Insertion Sort Algorithm
+ public static void insertionSort(int[] array) {
+ int n = array.length;
+ for (int i = 1; i < n; i++) {
+ int key = array[i];
+ int j = i - 1;
+ while (j >= 0 && array[j] > key) {
+ array[j + 1] = array[j];
+ j--;
+ }
+ array[j + 1] = key;
+ }
+ }
+ // Merge Sort Algorithm
+ public static void mergeSort(int[] array) {
+ if (array.length < 2) {
+ return;
+ }
+ int mid = array.length / 2;
+ int[] left = Arrays.copyOfRange(array, 0, mid);
+ int[] right = Arrays.copyOfRange(array, mid, array.length);
+ mergeSort(left);
+ mergeSort(right);
+ merge(array, left, right);
+ }
+ public static void merge(int[] array, int[] left, int[] right) {
+ int i = 0, j = 0, k = 0;
+ while (i < left.length && j < right.length) {
+ if (left[i] <= right[j]) {
+ array[k++] = left[i++];
+ } else {
+ array[k++] = right[j++];
+ }
+ }
+ while (i < left.length) {
+ array[k++] = left[i++];
+ }
+ while (j < right.length) {
+ array[k++] = right[j++];
+ }
+ }
+ // Quick Sort Algorithm
+ public static void quickSort(int[] array, int low, int high) {
+ if (low < high) {
+ int pi = partition(array, low, high);
+ quickSort(array, low, pi - 1);
+ quickSort(array, pi + 1, high);
+ }
+ }
+ public static int partition(int[] array, int low, int high) {
+ int pivot = array[high];
+ int i = (low - 1);
+ for (int j = low; j < high; j++) {
+ if (array[j] <= pivot) {
+ i++;
+ int temp = array[i];
+ array[i] = array[j];
+ array[j] = temp;
+ }
+ }
+ int temp = array[i + 1];
+ array[i + 1] = array[high];
+ array[high] = temp;
+ return i + 1;
+ }
+}
+Q2. Program to perform various operations on an Array like 
+insert( ),remove( ) ,insertAt( ) ,removeAt( ), print( ) [check all 
+the operations,conditions and exceptions]
+ANS:
+ 
+public class ArrayOperations {
+ private final int[] array;
+ private int size;
+ public ArrayOperations(int capacity) {
+ array = new int[capacity];
+ size = 0;
+ }
+ // Insert an element at the end of the array
+ public void insert(int element) {
+ if (size >= array.length) {
+ throw new ArrayIndexOutOfBoundsException("Array is full. Cannot insert 
+element.");
+ }
+ array[size++] = element;
+ }
+ // Remove the first occurrence of the element from the array
+ public void remove(int element) {
+ int index = indexOf(element);
+ if (index == -1) {
+ throw new IllegalArgumentException("Element not found in the array.");
+ }
+ removeAt(index);
+ }
+ // Insert an element at a specific index
+ public void insertAt(int index, int element) {
+ if (index < 0 || index > size) {
+ throw new IndexOutOfBoundsException("Index out of bounds.");
+ }
+ if (size >= array.length) {
+ throw new ArrayIndexOutOfBoundsException("Array is full. Cannot insert 
+element.");
+ }
+ for (int i = size; i > index; i--) {
+ array[i] = array[i - 1];
+ }
+ array[index] = element;
+ size++;
+ }
+ // Remove an element at a specific index
+ public void removeAt(int index) {
+ if (index < 0 || index >= size) {
+ throw new IndexOutOfBoundsException("Index out of bounds.");
+ }
+ for (int i = index; i < size - 1; i++) {
+ array[i] = array[i + 1];
+ }
+ size--;
+ }
+ // Print the array elements
+ public void print() {
+ if (size == 0) {
+ System.out.println("Array is empty.");
+ return;
+ }
+ System.out.print("Array elements: ");
+ for (int i = 0; i < size; i++) {
+ System.out.print(array[i] + " ");
+ }
+ System.out.println();
+ }
+ // Find the index of the first occurrence of the element
+ private int indexOf(int element) {
+ for (int i = 0; i < size; i++) {
+ if (array[i] == element) {
+ return i;
+ }
+ }
+ return -1; // Element not found
+ }
+ public static void main(String[] args) {
+ ArrayOperations arrOps = new ArrayOperations(10);
+ // Testing insert operations
+ try {
+ arrOps.insert(10);
+ arrOps.insert(20);
+ arrOps.insert(30);
+ arrOps.print(); // Expected: 10 20 30
+ arrOps.insertAt(1, 15);
+ arrOps.print(); // Expected: 10 15 20 30
+ arrOps.remove(20);
+ arrOps.print(); // Expected: 10 15 30
+ arrOps.removeAt(0);
+ arrOps.print(); // Expected: 15 30
+ // Edge cases
+ arrOps.insertAt(1, 25);
+ arrOps.print(); // Expected: 15 25 30
+ arrOps.removeAt(1);
+ arrOps.print(); // Expected: 15 30
+ arrOps.insert(40);
+ arrOps.insert(50);
+ arrOps.print(); // Expected: 15 30 40 50
+ arrOps.insert(60); // Should throw ArrayIndexOutOfBoundsException
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ // Testing edge cases and exceptions
+ try {
+ arrOps.remove(100); // Should throw IllegalArgumentException
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ try {
+ arrOps.removeAt(5); // Should throw IndexOutOfBoundsException
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ try {
+ arrOps.insertAt(-1, 5); // Should throw IndexOutOfBoundsException
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ try {
+ arrOps.removeAt(1); // Should be valid
+ arrOps.print(); // Expected: 15 40 50
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ }
+}
+Q3. Program to build a stack using Dynamic Array.[check all 
+the operations, conditions, and exceptions]
+ANS:
+import java.util.ArrayList;
+public class DynamicArrayStack<T> {
+ private final ArrayList<T> stack;
+ public DynamicArrayStack() {
+ stack = new ArrayList<>();
+ }
+ // Push an element onto the stack
+ public void push(T element) {
+ stack.add(element);
+ }
+ // Pop an element from the stack
+ public T pop() {
+ if (isEmpty()) {
+ throw new IllegalStateException("Stack is empty. Cannot pop element.");
+ }
+ return stack.remove(stack.size() - 1);
+ }
+ // Peek the top element of the stack
+ public T peek() {
+ if (isEmpty()) {
+ throw new IllegalStateException("Stack is empty. Cannot peek element.");
+ }
+ return stack.get(stack.size() - 1);
+ }
+ // Check if the stack is empty
+ public boolean isEmpty() {
+ return stack.isEmpty();
+ }
+ // Print all elements in the stack
+ public void print() {
+ if (isEmpty()) {
+ System.out.println("Stack is empty.");
+ return;
+ }
+ System.out.println("Stack elements (top to bottom):");
+ for (int i = stack.size() - 1; i >= 0; i--) {
+ System.out.println(stack.get(i));
+ }
+ }
+ public static void main(String[] args) {
+ DynamicArrayStack<Integer> stack = new DynamicArrayStack<>();
+ try {
+ // Testing push operations
+ stack.push(10);
+ stack.push(20);
+ stack.push(30);
+ stack.print(); // Expected: 30 20 10
+ // Testing peek operation
+ System.out.println("Peek: " + stack.peek()); // Expected: 30
+ // Testing pop operations
+ System.out.println("Pop: " + stack.pop()); // Expected: 30
+ stack.print(); // Expected: 20 10
+ System.out.println("Pop: " + stack.pop()); // Expected: 20
+ stack.print(); // Expected: 10
+ // Testing stack underflow
+ System.out.println("Pop: " + stack.pop()); // Expected: 10
+ stack.print(); // Expected: Stack is empty
+ // Testing stack underflow exception
+ try {
+ stack.pop(); // Should throw IllegalStateException
+ } catch (Exception e) {
+ System.out.println(e.getMessage()); // Expected: Stack is empty. Cannot pop 
+element.
+ }
+ // Testing peek on empty stack
+ try {
+ stack.peek(); // Should throw IllegalStateException
+ } catch (Exception e) {
+ System.out.println(e.getMessage()); // Expected: Stack is empty. Cannot peek 
+element.
+ }
+ } catch (Exception e) {
+ System.out.println(e.getMessage());
+ }
+ }
+}
